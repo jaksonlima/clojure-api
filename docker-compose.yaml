@@ -1,0 +1,25 @@
+version: "3"
+
+services:
+  db:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_PASSWORD: "clojure-api"
+    ports:
+      - 5432:5432
+    volumes:
+      - ./resources/database:/docker-entrypoint-initdb.d
+
+  app:
+    build: .
+    depends_on:
+      - db
+    ports:
+      - 3000:3000
+
+  unit-tests:
+    image: clojure:openjdk-17-lein
+    command: lein test
+    volumes:
+      - .:/tmp
